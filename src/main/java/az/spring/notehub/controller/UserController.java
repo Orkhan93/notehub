@@ -21,7 +21,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<User> signup(@RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<UserResponse> signup(@RequestBody SignupRequest signupRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.signup(signupRequest));
     }
 
@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @PutMapping("/update/{userId}")
-    public ResponseEntity<User> update(@RequestBody UserRequest userRequest, @PathVariable(name = "userId") Long userId) {
+    public ResponseEntity<UserResponse> update(@RequestBody UserRequest userRequest, @PathVariable(name = "userId") Long userId) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.update(userRequest, userId));
     }
 
@@ -47,7 +47,7 @@ public class UserController {
     }
 
     @GetMapping("/get/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable(name = "userId") Long userId) {
+    public ResponseEntity<UserResponse> getUserById(@PathVariable(name = "userId") Long userId) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUserById(userId));
     }
 
