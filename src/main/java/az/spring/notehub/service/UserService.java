@@ -2,6 +2,7 @@ package az.spring.notehub.service;
 
 import az.spring.notehub.entity.User;
 import az.spring.notehub.enums.UserRole;
+import az.spring.notehub.mapper.UserMapper;
 import az.spring.notehub.repository.UserRepository;
 import az.spring.notehub.request.ChangePasswordRequest;
 import az.spring.notehub.request.LoginRequest;
@@ -23,20 +24,17 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    public User signup(SignupRequest signupRequest) {
+    public UserResponse signup(SignupRequest signupRequest) {
         Optional<User> email = userRepository.findByEmailEqualsIgnoreCase(signupRequest.getEmail());
         Optional<User> username = userRepository.findByUsernameEqualsIgnoreCase(signupRequest.getUsername());
         if (email.isPresent() || username.isPresent()) {
             throw new RuntimeException("Bu email ile istifadeci artiq bazaya daxil edilib...");
         } else {
-            User user = new User();
-            user.setName(signupRequest.getName());
+            User user = userMapper.fromSignRequestToModel(signupRequest);
             user.setUserRole(UserRole.USER);
-            user.setUsername(signupRequest.getUsername());
-            user.setEmail(signupRequest.getEmail());
-            user.setPassword(signupRequest.getPassword());
-            return userRepository.save(user);
+            return userMapper.fromModelToResponse(userRepository.save(user));
         }
     }
 
@@ -62,29 +60,26 @@ public class UserService {
         }
     }
 
-    public User update(UserRequest userRequest, Long userId) {
+    public UserResponse update(UserRequest userRequest, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new RuntimeException("User not found : "));
-        User response = new User();
-        response.setId(user.getId());
-        response.setName(userRequest.getName());
-        response.setUsername(userRequest.getUsername());
-        response.setEmail(userRequest.getEmail());
-        response.setPassword(userRequest.getPassword());
-        response.setUserRole(user.getUserRole());
-        return userRepository.save(response);
+        User updated = userMapper.fromRequestToModel(userRequest);
+        updated.setId(user.getId());
+        updated.setUserRole(user.getUserRole());
+        return userMapper.fromModelToResponse(userRepository.save(updated));
     }
 
     public UserResponseList getAllUsers() {
-        List<User> all = userRepository.findAll();
         UserResponseList responseList = new UserResponseList();
+        List<User> all = userRepository.findAll();
         responseList.setUserList(all);
         return responseList;
     }
 
-    public User getUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(
+    public UserResponse getUserById(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(
                 () -> new RuntimeException("User not found : "));
+        return userMapper.fromModelToResponse(user);
     }
 
     public void deleteUserById(Long userId) {
