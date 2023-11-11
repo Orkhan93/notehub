@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -32,5 +33,9 @@ public class Note {
     @JoinColumn(name = "userId")
     @JsonIgnore
     private User user;
+
+    @Column(name = "likes")
+    @OneToMany(mappedBy = "note", cascade = CascadeType.ALL)
+    private List<Like> likes;
 
 }
