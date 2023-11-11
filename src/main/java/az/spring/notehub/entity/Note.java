@@ -38,4 +38,8 @@ public class Note {
     @OneToMany(mappedBy = "note", cascade = CascadeType.ALL)
     private List<Like> likes;
 
+    @Column(name = "notes")
+    @OneToMany(mappedBy = "note", cascade = CascadeType.ALL)
+    private List<Comment> comments;
+
 }
