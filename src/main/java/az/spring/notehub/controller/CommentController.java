@@ -32,7 +32,7 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK).body(commentService.getAllComments());
     }
 
-    @GetMapping("/getAll/ByUserId/{userId}")
+    @GetMapping("/getAll/byUserId/{userId}")
     public ResponseEntity<CommentResponseList> getAllCommentByUserId(@PathVariable(name = "userId") Long userId) {
         return ResponseEntity.status(HttpStatus.OK).body(commentService.getAllCommentByUserId(userId));
     }
@@ -42,7 +42,7 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK).body(commentService.getCommentById(commentId));
     }
 
-    @GetMapping("/{userId}/getAll/ByUserIdAndNoteId/{noteId}")
+    @GetMapping("/{userId}/getAll/byUserIdAndNoteId/{noteId}")
     public ResponseEntity<CommentResponseList> getAllCommentByUserIdAndNoteId(@PathVariable(name = "userId") Long userId,
                                                                               @PathVariable(name = "noteId") Long noteId) {
         return ResponseEntity.status(HttpStatus.OK).body(commentService.getAllCommentByUserIdAndNoteId(userId, noteId));

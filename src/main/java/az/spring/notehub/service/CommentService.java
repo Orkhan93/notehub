@@ -93,6 +93,8 @@ public class CommentService {
         for (Comment comment : comments) {
             if (commentId == comment.getId())
                 commentRepository.deleteById(commentId);
+            else
+                throw new RuntimeException("Bu id ile comment tapilmadi : ");
         }
     }
 
