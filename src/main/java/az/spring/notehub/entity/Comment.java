@@ -1,5 +1,6 @@
 package az.spring.notehub.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -18,10 +19,12 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "userId")
+    @JsonIgnore
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "noteId")
+    @JsonIgnore
     private Note note;
 
 }
