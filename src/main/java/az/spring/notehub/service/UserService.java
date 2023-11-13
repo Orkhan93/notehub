@@ -2,6 +2,9 @@ package az.spring.notehub.service;
 
 import az.spring.notehub.entity.User;
 import az.spring.notehub.enums.UserRole;
+import az.spring.notehub.exception.error.ErrorMessage;
+import az.spring.notehub.exception.handler.NoteNotFoundException;
+import az.spring.notehub.exception.handler.UserNotFoundException;
 import az.spring.notehub.mapper.UserMapper;
 import az.spring.notehub.repository.UserRepository;
 import az.spring.notehub.request.ChangePasswordRequest;
@@ -12,6 +15,7 @@ import az.spring.notehub.response.UserResponse;
 import az.spring.notehub.response.UserResponseList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,7 +52,7 @@ public class UserService {
 
     public void changePassword(ChangePasswordRequest changePasswordRequest, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new RuntimeException("User not found : "));
+                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user)) {
             if (!user.getPassword().equals(changePasswordRequest.getOldPassword())) {
                 throw new RuntimeException("Kohne Password duzgun daxil edilmeyib : ");
@@ -62,7 +66,7 @@ public class UserService {
 
     public UserResponse update(UserRequest userRequest, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new RuntimeException("User not found : "));
+                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         User updated = userMapper.fromRequestToModel(userRequest);
         updated.setId(user.getId());
         updated.setUserRole(user.getUserRole());
@@ -78,13 +82,13 @@ public class UserService {
 
     public UserResponse getUserById(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new RuntimeException("User not found : "));
+                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         return userMapper.fromModelToResponse(user);
     }
 
     public void deleteUserById(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new RuntimeException("User Not found : "));
+                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         userRepository.delete(user);
     }
 
