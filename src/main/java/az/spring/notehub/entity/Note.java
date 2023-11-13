@@ -42,4 +42,7 @@ public class Note {
     @OneToMany(mappedBy = "note", cascade = CascadeType.ALL)
     private List<Comment> comments;
 
+    @OneToOne(mappedBy = "note")
+    private Reminder reminder;
+
 }
