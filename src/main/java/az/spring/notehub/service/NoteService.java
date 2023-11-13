@@ -2,6 +2,9 @@ package az.spring.notehub.service;
 
 import az.spring.notehub.entity.Note;
 import az.spring.notehub.entity.User;
+import az.spring.notehub.exception.error.ErrorMessage;
+import az.spring.notehub.exception.handler.NoteNotFoundException;
+import az.spring.notehub.exception.handler.UserNotFoundException;
 import az.spring.notehub.mapper.NoteMapper;
 import az.spring.notehub.repository.NoteRepository;
 import az.spring.notehub.repository.UserRepository;
@@ -10,6 +13,7 @@ import az.spring.notehub.response.NoteResponse;
 import az.spring.notehub.response.NoteResponseList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,7 +30,7 @@ public class NoteService {
 
     public NoteResponse addNote(NoteRequest noteRequest, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new RuntimeException("User not found : "));
+                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         Note note = noteMapper.fromRequestToModel(noteRequest);
         note.setCreationDate(LocalDateTime.now());
         note.setUser(user);
@@ -35,9 +39,9 @@ public class NoteService {
 
     public NoteResponse updateNote(NoteRequest noteRequest, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new RuntimeException("User not found : "));
+                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         Note note = noteRepository.findById(noteRequest.getId()).orElseThrow(
-                () -> new RuntimeException("Note not found : "));
+                () -> new NoteNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.NOTE_NOT_FOUND));
         Note updated = noteMapper.fromRequestToModel(noteRequest);
         updated.setUser(user);
         updated.setId(note.getId());
@@ -47,7 +51,7 @@ public class NoteService {
 
     public NoteResponse getNoteById(Long noteId) {
         Note note = noteRepository.findById(noteId).orElseThrow(
-                () -> new RuntimeException("Note not found : "));
+                () -> new NoteNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.NOTE_NOT_FOUND));
         return noteMapper.fromModelToResponse(note);
     }
 
@@ -60,9 +64,9 @@ public class NoteService {
 
     public void deleteNoteById(Long noteId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new RuntimeException("User not found : "));
+                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         Note note = noteRepository.findById(noteId).orElseThrow(
-                () -> new RuntimeException("Note not found : "));
+                () -> new NoteNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.NOTE_NOT_FOUND));
         if (note.getUser().getId() == user.getId()) {
             noteRepository.deleteById(noteId);
         }

@@ -3,6 +3,10 @@ package az.spring.notehub.service;
 import az.spring.notehub.entity.Comment;
 import az.spring.notehub.entity.Note;
 import az.spring.notehub.entity.User;
+import az.spring.notehub.exception.error.ErrorMessage;
+import az.spring.notehub.exception.handler.CommentNotFoundException;
+import az.spring.notehub.exception.handler.NoteNotFoundException;
+import az.spring.notehub.exception.handler.UserNotFoundException;
 import az.spring.notehub.mapper.CommentMapper;
 import az.spring.notehub.repository.CommentRepository;
 import az.spring.notehub.repository.NoteRepository;
@@ -12,6 +16,7 @@ import az.spring.notehub.response.CommentResponse;
 import az.spring.notehub.response.CommentResponseList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,9 +35,9 @@ public class CommentService {
 
     public CommentResponse addComment(CommentRequest commentRequest) {
         User user = userRepository.findById(commentRequest.getUserId()).orElseThrow(
-                () -> new RuntimeException("User Not found : "));
+                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         Note note = noteRepository.findById(commentRequest.getNoteId()).orElseThrow(
-                () -> new RuntimeException("Note not found : "));
+                () -> new NoteNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.NOTE_NOT_FOUND));
         Comment comment = commentMapper.fromRequestToModel(commentRequest);
         comment.setUser(user);
         comment.setNote(note);
@@ -41,13 +46,13 @@ public class CommentService {
 
     public CommentResponse updateComment(CommentRequest commentRequest, Long commentId) {
         User user = userRepository.findById(commentRequest.getUserId()).orElseThrow(
-                () -> new RuntimeException("User Not found : "));
+                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         Note note = noteRepository.findById(commentRequest.getNoteId()).orElseThrow(
-                () -> new RuntimeException("Note not found : "));
+                () -> new NoteNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.NOTE_NOT_FOUND));
         if (Objects.nonNull(user) && Objects.nonNull(note)) {
             Optional<Comment> comment = commentRepository.findById(commentId);
             if (comment.isEmpty()) {
-                throw new RuntimeException("Comment not found : ");
+                throw new CommentNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.COMMENT_NOT_FOUND);
             } else {
                 Comment updated = commentMapper.fromRequestToModel(commentRequest);
                 updated.setId(commentId);
@@ -61,7 +66,7 @@ public class CommentService {
 
     public CommentResponse getCommentById(Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new RuntimeException("Comment not found : "));
+                () -> new CommentNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.COMMENT_NOT_FOUND));
         return commentMapper.fromModelToResponse(comment);
     }
 
@@ -88,13 +93,13 @@ public class CommentService {
 
     public void deleteCommentById(Long userId, Long commentId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new RuntimeException("User Not found : "));
+                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         List<Comment> comments = commentRepository.findByUserId(user.getId());
         for (Comment comment : comments) {
             if (Objects.equals(commentId, comment.getId()))
                 commentRepository.deleteById(commentId);
             else
-                throw new RuntimeException("Bu id ile comment tapilmadi : ");
+                throw new CommentNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.NOTE_NOT_FOUND);
         }
     }
 
