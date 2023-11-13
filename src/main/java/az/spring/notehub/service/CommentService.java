@@ -91,7 +91,7 @@ public class CommentService {
                 () -> new RuntimeException("User Not found : "));
         List<Comment> comments = commentRepository.findByUserId(user.getId());
         for (Comment comment : comments) {
-            if (commentId == comment.getId())
+            if (Objects.equals(commentId, comment.getId()))
                 commentRepository.deleteById(commentId);
             else
                 throw new RuntimeException("Bu id ile comment tapilmadi : ");

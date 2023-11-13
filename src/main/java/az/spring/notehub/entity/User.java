@@ -4,7 +4,6 @@ import az.spring.notehub.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
