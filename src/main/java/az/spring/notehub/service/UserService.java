@@ -3,7 +3,6 @@ package az.spring.notehub.service;
 import az.spring.notehub.entity.User;
 import az.spring.notehub.enums.UserRole;
 import az.spring.notehub.exception.error.ErrorMessage;
-import az.spring.notehub.exception.handler.NoteNotFoundException;
 import az.spring.notehub.exception.handler.UserNotFoundException;
 import az.spring.notehub.mapper.UserMapper;
 import az.spring.notehub.repository.UserRepository;
