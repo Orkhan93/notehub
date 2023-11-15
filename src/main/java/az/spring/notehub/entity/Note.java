@@ -3,13 +3,15 @@ package az.spring.notehub.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Data
+@Setter
+@Getter
 @Table(name = "notes")
 public class Note {
 
@@ -44,5 +46,11 @@ public class Note {
 
     @OneToOne(mappedBy = "note")
     private Reminder reminder;
+
+    @Override
+    public String toString() {
+        return "Note{id=%d, title='%s', content='%s', creationDate=%s}"
+                .formatted(id, title, content, creationDate);
+    }
 
 }

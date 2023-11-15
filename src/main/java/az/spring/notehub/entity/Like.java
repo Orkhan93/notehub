@@ -1,10 +1,12 @@
 package az.spring.notehub.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Data
+@Setter
+@Getter
 @Table(name = "likes")
 public class Like {
 
@@ -20,5 +22,10 @@ public class Like {
     @ManyToOne
     @JoinColumn(name = "note_id")
     private Note note;
+
+    @Override
+    public String toString() {
+        return "Like{id=%d}".formatted(id);
+    }
 
 }
