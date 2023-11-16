@@ -1,8 +1,11 @@
 package az.spring.notehub.service;
 
+import az.spring.notehub.contants.NoteConstant;
 import az.spring.notehub.entity.User;
 import az.spring.notehub.enums.UserRole;
 import az.spring.notehub.exception.error.ErrorMessage;
+import az.spring.notehub.exception.handler.IncorrectPasswordException;
+import az.spring.notehub.exception.handler.UserAlreadyExistsException;
 import az.spring.notehub.exception.handler.UserNotFoundException;
 import az.spring.notehub.mapper.UserMapper;
 import az.spring.notehub.repository.UserRepository;
@@ -30,13 +33,15 @@ public class UserService {
     private final UserMapper userMapper;
 
     public UserResponse signup(SignupRequest signupRequest) {
+        log.info("Inside signupRequest {}", signupRequest);
         Optional<User> email = userRepository.findByEmailEqualsIgnoreCase(signupRequest.getEmail());
         Optional<User> username = userRepository.findByUsernameEqualsIgnoreCase(signupRequest.getUsername());
         if (email.isPresent() || username.isPresent()) {
-            throw new RuntimeException("Bu email ile istifadeci artiq bazaya daxil edilib...");
+            throw new UserAlreadyExistsException(HttpStatus.CONFLICT.name(), ErrorMessage.ALREADY_EXISTS);
         } else {
             User user = userMapper.fromSignRequestToModel(signupRequest);
             user.setUserRole(UserRole.USER);
+            log.info("Inside signup {}", user);
             return userMapper.fromModelToResponse(userRepository.save(user));
         }
     }
@@ -44,31 +49,35 @@ public class UserService {
     public String login(LoginRequest loginRequest) {
         Optional<User> optionalUser = userRepository.findByEmailEqualsIgnoreCase(loginRequest.getEmail());
         if (optionalUser.isPresent() && optionalUser.get().getPassword().equals(loginRequest.getPassword())) {
-            return "Successfully registered.";
+            return NoteConstant.SUCCESSFULLY_REGISTER;
         } else
-            return "Bad credentials.";
+            return NoteConstant.BAD_CREDENTIALS;
     }
 
     public void changePassword(ChangePasswordRequest changePasswordRequest, Long userId) {
+        log.info("Inside changePasswordRequest {}", changePasswordRequest);
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user)) {
             if (!user.getPassword().equals(changePasswordRequest.getOldPassword())) {
-                throw new RuntimeException("Kohne Password duzgun daxil edilmeyib : ");
+                throw new IncorrectPasswordException(HttpStatus.BAD_REQUEST.name(), ErrorMessage.OLD_PASSWORD_IS_INCORRECT);
             } else if (!changePasswordRequest.getNewPassword().equals(changePasswordRequest.getConfirmPassword())) {
-                throw new RuntimeException("Tesdiq edilmeli olan password yanlis daxil edilib : ");
+                throw new IncorrectPasswordException(HttpStatus.BAD_REQUEST.name(), ErrorMessage.NOT_MATCHES);
             } else
                 user.setPassword(changePasswordRequest.getNewPassword());
+            log.info("Inside changePassword {}", user);
             userRepository.save(user);
         }
     }
 
     public UserResponse update(UserRequest userRequest, Long userId) {
+        log.info("Inside userRequest {}", userRequest);
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         User updated = userMapper.fromRequestToModel(userRequest);
         updated.setId(user.getId());
         updated.setUserRole(user.getUserRole());
+        log.info("Inside updatedUser {}", updated);
         return userMapper.fromModelToResponse(userRepository.save(updated));
     }
 
@@ -76,18 +85,21 @@ public class UserService {
         UserResponseList responseList = new UserResponseList();
         List<User> all = userRepository.findAll();
         responseList.setUserList(all);
+        log.info("Inside getAllUsers {}", responseList);
         return responseList;
     }
 
     public UserResponse getUserById(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
+        log.info("Inside getUserById {}", user);
         return userMapper.fromModelToResponse(user);
     }
 
     public void deleteUserById(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
+        log.info("Inside deleteUserById {}", user);
         userRepository.delete(user);
     }
 

@@ -30,8 +30,10 @@ public class LikeService {
     public void likeNote(Long userId, Long noteId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
+        log.info("Inside user {}", user);
         Note note = noteRepository.findById(noteId).orElseThrow(
                 () -> new NoteNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.NOTE_NOT_FOUND));
+        log.info("Inside note {}", note);
         if (!hasUserLiked(userId, noteId)) {
             Like like = new Like();
             like.setUser(user);

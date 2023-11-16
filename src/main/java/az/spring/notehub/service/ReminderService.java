@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -37,6 +38,7 @@ public class ReminderService {
     private final EmailService emailService;
 
     public ReminderResponse createReminder(ReminderRequest reminderRequest, Long userId) {
+        log.info("Inside reminderRequest {}", reminderRequest);
         Optional<User> user = userRepository.findById(userId);
         Note note = noteRepository.findById(reminderRequest.getNoteId()).orElseThrow(
                 () -> new NoteNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.NOTE_NOT_FOUND));
@@ -45,6 +47,7 @@ public class ReminderService {
         } else {
             Reminder reminder = reminderMapper.fromRequestToModel(reminderRequest);
             reminder.setNote(note);
+            log.info("Inside createReminder {}", reminder);
             return reminderMapper.fromModelToResponse(reminderRepository.save(reminder));
         }
     }
@@ -58,7 +61,21 @@ public class ReminderService {
         }
     }
 
+//    public void checkAndSendRemindersXXX() {
+//        LocalDateTime now = LocalDateTime.now();
+//        List<Reminder> reminders = reminderRepository.findByReminderDateAfter(now);
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//        for (Reminder reminder : reminders) {
+//            LocalDateTime time = reminder.getReminderDate().minusDays(3);
+//            if (now == time) {
+//                User user = reminder.getNote().getUser();
+//                emailService.sendEmailToUser(user, NoteConstant.EMAIL_SUBJECT, NoteConstant.EMAIL_MESSAGE);
+//            }
+//        }
+//    }
+
     public ReminderResponse updateReminder(ReminderRequest reminderRequest, Long userId) {
+        log.info("Inside reminderRequest {}", reminderRequest);
         Note note = noteRepository.findById(reminderRequest.getNoteId()).orElseThrow(
                 () -> new NoteNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.NOTE_NOT_FOUND));
         Optional<User> optionalUser = userRepository.findById(userId);
@@ -71,6 +88,7 @@ public class ReminderService {
             } else {
                 Reminder updatedReminder = reminderMapper.fromRequestToModel(reminderRequest);
                 updatedReminder.setNote(note);
+                log.info("Inside updateReminder {}", updatedReminder);
                 return reminderMapper.fromModelToResponse(reminderRepository.save(updatedReminder));
             }
         }
@@ -80,12 +98,14 @@ public class ReminderService {
         List<Reminder> all = reminderRepository.findAll();
         ReminderResponseList responseList = new ReminderResponseList();
         responseList.setReminderList(all);
+        log.info("Inside getAllReminders {}", responseList);
         return responseList;
     }
 
     public ReminderResponse getReminderById(Long reminderId) {
         Reminder reminder = reminderRepository.findById(reminderId).orElseThrow(
                 () -> new ReminderNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.REMINDER_NOT_FOUND));
+        log.info("Inside getReminderById {}", reminder);
         return reminderMapper.fromModelToResponse(reminder);
     }
 
@@ -96,6 +116,7 @@ public class ReminderService {
             Reminder reminder = reminderRepository.findById(reminderId).orElseThrow(
                     () -> new ReminderNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.REMINDER_NOT_FOUND));
             if (reminder.getNote().getUser() == user) {
+                log.info("Inside deleteReminderById {}", reminder);
                 reminderRepository.deleteById(reminderId);
             }
         }

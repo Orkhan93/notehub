@@ -29,29 +29,35 @@ public class NoteService {
     private final UserRepository userRepository;
 
     public NoteResponse addNote(NoteRequest noteRequest, Long userId) {
+        log.info("Inside noteRequest {}", noteRequest);
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         Note note = noteMapper.fromRequestToModel(noteRequest);
         note.setCreationDate(LocalDateTime.now());
         note.setUser(user);
+        log.info("Inside note {}", note);
         return noteMapper.fromModelToResponse(noteRepository.save(note));
     }
 
     public NoteResponse updateNote(NoteRequest noteRequest, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
+        log.info("Inside user {}", user);
         Note note = noteRepository.findById(noteRequest.getId()).orElseThrow(
                 () -> new NoteNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.NOTE_NOT_FOUND));
+        log.info("Inside note {}", note);
         Note updated = noteMapper.fromRequestToModel(noteRequest);
         updated.setUser(user);
         updated.setId(note.getId());
         updated.setCreationDate(LocalDateTime.now());
+        log.info("Inside updatedNote {}", updated);
         return noteMapper.fromModelToResponse(noteRepository.save(updated));
     }
 
     public NoteResponse getNoteById(Long noteId) {
         Note note = noteRepository.findById(noteId).orElseThrow(
                 () -> new NoteNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.NOTE_NOT_FOUND));
+        log.info("Inside noteResponse {}", note);
         return noteMapper.fromModelToResponse(note);
     }
 
@@ -59,6 +65,7 @@ public class NoteService {
         List<Note> allNotes = noteRepository.findAll();
         NoteResponseList responseList = new NoteResponseList();
         responseList.setNoteList(allNotes);
+        log.info("Inside allNotes {}", responseList);
         return responseList;
     }
 
@@ -68,6 +75,7 @@ public class NoteService {
         Note note = noteRepository.findById(noteId).orElseThrow(
                 () -> new NoteNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.NOTE_NOT_FOUND));
         if (note.getUser().getId() == user.getId()) {
+            log.info("Inside deleteNoteById {}", note);
             noteRepository.deleteById(noteId);
         }
     }
