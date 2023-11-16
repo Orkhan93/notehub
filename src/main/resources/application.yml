@@ -21,3 +21,10 @@ spring:
           auth: true
           starttls:
             enable: true
+logging:
+  file:
+    name: logs/notehub_service.log
+  level:
+    az.spring.notehubservice: DEBUG
+    org.springframework.web: ERROR
+    org.hibernate: ERROR

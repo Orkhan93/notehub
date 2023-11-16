@@ -1,9 +1,7 @@
 package az.spring.notehub.exception;
 
-import az.spring.notehub.exception.handler.CommentNotFoundException;
-import az.spring.notehub.exception.handler.NoteNotFoundException;
-import az.spring.notehub.exception.handler.ReminderNotFoundException;
-import az.spring.notehub.exception.handler.UserNotFoundException;
+import az.spring.notehub.exception.error.ErrorMessage;
+import az.spring.notehub.exception.handler.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -41,6 +39,20 @@ public class CustomException {
     public ProblemDetail handlerReminderNotFoundException(ReminderNotFoundException exception) {
         log.error("handlerReminderNotFoundException {}", exception.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ProblemDetail handlerUserAlreadyExistsException(UserAlreadyExistsException exception) {
+        log.error("handlerUserAlreadyExistsException {}", exception.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
+
+    @ExceptionHandler(IncorrectPasswordException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ProblemDetail handlerIncorrectPasswordException(IncorrectPasswordException exception) {
+        log.error("handlerIncorrectPasswordException {}", exception.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
 }

@@ -12,10 +12,16 @@ public class AutomaticReminderService {
 
     private final ReminderService reminderService;
 
-    @Scheduled(cron = "0 20 9 * * *") // her gun saat 09:20`de ise dusecek...
+    @Scheduled(cron = "0 30 9 * * *") // The method will start every day at 09.30...
     public void automaticReminderCheck() {
         log.info("Inside automaticReminderCheck : ");
         reminderService.checkAndSendReminders();
     }
+
+//    @Scheduled(cron = "0 11 16 * * *")
+//    public void auto() {
+//        log.info("Inside auto : ");
+//        reminderService.checkAndSendRemindersXXX();
+//    }
 
 }

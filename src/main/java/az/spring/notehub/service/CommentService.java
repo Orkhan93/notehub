@@ -1,5 +1,6 @@
 package az.spring.notehub.service;
 
+import az.spring.notehub.contants.NoteConstant;
 import az.spring.notehub.entity.Comment;
 import az.spring.notehub.entity.Note;
 import az.spring.notehub.entity.User;
@@ -34,6 +35,7 @@ public class CommentService {
     private final CommentMapper commentMapper;
 
     public CommentResponse addComment(CommentRequest commentRequest) {
+        log.info("Inside commentRequest {}", commentRequest);
         User user = userRepository.findById(commentRequest.getUserId()).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         Note note = noteRepository.findById(commentRequest.getNoteId()).orElseThrow(
@@ -41,10 +43,12 @@ public class CommentService {
         Comment comment = commentMapper.fromRequestToModel(commentRequest);
         comment.setUser(user);
         comment.setNote(note);
+        log.info("Inside comment {}", comment);
         return commentMapper.fromModelToResponse(commentRepository.save(comment));
     }
 
     public CommentResponse updateComment(CommentRequest commentRequest, Long commentId) {
+        log.info("Inside commentRequest {}", commentRequest);
         User user = userRepository.findById(commentRequest.getUserId()).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         Note note = noteRepository.findById(commentRequest.getNoteId()).orElseThrow(
@@ -58,15 +62,17 @@ public class CommentService {
                 updated.setId(commentId);
                 updated.setNote(note);
                 updated.setUser(user);
+                log.info("Inside updated {}", updated);
                 return commentMapper.fromModelToResponse(commentRepository.save(updated));
             }
         } else
-            throw new RuntimeException("Bad request : ");
+            throw new RuntimeException(NoteConstant.BAD_CREDENTIALS);
     }
 
     public CommentResponse getCommentById(Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new CommentNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.COMMENT_NOT_FOUND));
+        log.info("Inside comment {}", comment);
         return commentMapper.fromModelToResponse(comment);
     }
 
@@ -74,6 +80,7 @@ public class CommentService {
         CommentResponseList responseList = new CommentResponseList();
         List<Comment> comments = commentRepository.findByUserId(userId);
         responseList.setCommentList(comments);
+        log.info("Inside responseList {}", responseList);
         return responseList;
     }
 
@@ -81,6 +88,7 @@ public class CommentService {
         CommentResponseList responseList = new CommentResponseList();
         List<Comment> comments = commentRepository.findByUserIdAndNoteId(userId, noteId);
         responseList.setCommentList(comments);
+        log.info("Inside responseList {}", responseList);
         return responseList;
     }
 
@@ -88,6 +96,7 @@ public class CommentService {
         CommentResponseList responseList = new CommentResponseList();
         List<Comment> comments = commentRepository.findAll();
         responseList.setCommentList(comments);
+        log.info("Inside getAllComments {}", responseList);
         return responseList;
     }
 
@@ -96,9 +105,10 @@ public class CommentService {
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         List<Comment> comments = commentRepository.findByUserId(user.getId());
         for (Comment comment : comments) {
-            if (Objects.equals(commentId, comment.getId()))
+            if (Objects.equals(commentId, comment.getId())) {
+                log.info("Inside deleteCommentById {}", comment);
                 commentRepository.deleteById(commentId);
-            else
+            } else
                 throw new CommentNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.NOTE_NOT_FOUND);
         }
     }
