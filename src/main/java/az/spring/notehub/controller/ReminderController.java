@@ -21,9 +21,9 @@ public class ReminderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(reminderService.createReminder(reminderRequest, userId));
     }
 
-    @PostMapping("/send/{userId}")
-    public void checkAndSendReminders(@PathVariable(name = "userId") Long userId) {
-        reminderService.checkAndSendReminders(userId);
+    @PostMapping("/send")
+    public void checkAndSendReminders() {
+        reminderService.checkAndSendReminders();
     }
 
 }

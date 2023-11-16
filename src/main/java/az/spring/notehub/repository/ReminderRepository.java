@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface ReminderRepository extends JpaRepository<Reminder, Long> {
 
-    List<Reminder> findByReminderDateBefore(LocalDateTime dateTime);
+    List<Reminder> findByReminderDateAfter(LocalDateTime dateTime);
 
 }
