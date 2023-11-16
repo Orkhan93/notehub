@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 public class ReminderRequest {
 
+    private Long id;
     private LocalDateTime reminderDate;
     private Long noteId;
 

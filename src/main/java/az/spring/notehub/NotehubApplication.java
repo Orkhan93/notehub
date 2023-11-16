@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class NotehubApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(NotehubApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(NotehubApplication.class, args);
+    }
 
 }
