@@ -2,6 +2,7 @@ package az.spring.notehub.exception;
 
 import az.spring.notehub.exception.handler.CommentNotFoundException;
 import az.spring.notehub.exception.handler.NoteNotFoundException;
+import az.spring.notehub.exception.handler.ReminderNotFoundException;
 import az.spring.notehub.exception.handler.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,13 @@ public class CustomException {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ProblemDetail handlerNoteNotFoundException(NoteNotFoundException exception) {
         log.error("handlerNoteNotFoundException {}", exception.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
+
+    @ExceptionHandler(ReminderNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ProblemDetail handlerReminderNotFoundException(ReminderNotFoundException exception) {
+        log.error("handlerReminderNotFoundException {}", exception.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
