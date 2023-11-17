@@ -1,0 +1,30 @@
+server:
+  port: 8090
+spring:
+  datasource:
+    username: root
+    password: 123
+    url: jdbc:mysql://localhost:3306/note-hub
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: orkhanmustafaev93@gmail.com
+    password: mwtgyixdvnytbiku
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+logging:
+  file:
+    name: logs/notehub_service.log
+  level:
+    az.spring.notehubservice: DEBUG
+    org.springframework.web: ERROR
+    org.hibernate: ERROR
