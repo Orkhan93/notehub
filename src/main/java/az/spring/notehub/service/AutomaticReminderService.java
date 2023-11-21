@@ -18,10 +18,4 @@ public class AutomaticReminderService {
         reminderService.checkAndSendReminders();
     }
 
-//    @Scheduled(cron = "0 11 16 * * *")
-//    public void auto() {
-//        log.info("Inside auto : ");
-//        reminderService.checkAndSendRemindersXXX();
-//    }
-
 }
