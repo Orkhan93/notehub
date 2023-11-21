@@ -21,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -53,26 +52,13 @@ public class ReminderService {
     }
 
     public void checkAndSendReminders() {
-        LocalDateTime now = LocalDateTime.now();
-        List<Reminder> reminders = reminderRepository.findByReminderDateAfter(now.plusMinutes(10));
+        LocalDateTime now = LocalDateTime.now().plusDays(3L);
+        List<Reminder> reminders = reminderRepository.findByReminderDateAfter(now);
         for (Reminder reminder : reminders) {
             User user = reminder.getNote().getUser();
             emailService.sendEmailToUser(user, NoteConstant.EMAIL_SUBJECT, NoteConstant.EMAIL_MESSAGE);
         }
     }
-
-//    public void checkAndSendRemindersXXX() {
-//        LocalDateTime now = LocalDateTime.now();
-//        List<Reminder> reminders = reminderRepository.findByReminderDateAfter(now);
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-//        for (Reminder reminder : reminders) {
-//            LocalDateTime time = reminder.getReminderDate().minusDays(3);
-//            if (now == time) {
-//                User user = reminder.getNote().getUser();
-//                emailService.sendEmailToUser(user, NoteConstant.EMAIL_SUBJECT, NoteConstant.EMAIL_MESSAGE);
-//            }
-//        }
-//    }
 
     public ReminderResponse updateReminder(ReminderRequest reminderRequest, Long userId) {
         log.info("Inside reminderRequest {}", reminderRequest);

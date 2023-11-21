@@ -44,4 +44,10 @@ public class ReminderController {
         return ResponseEntity.status(HttpStatus.OK).body(reminderService.getReminderById(reminderId));
     }
 
+    @DeleteMapping("/{userId}/delete/{reminderId}")
+    public void deleteReminderById(@PathVariable(name = "userId") Long userId,
+                                   @PathVariable(name = "reminderId") Long reminderId) {
+        reminderService.deleteReminderById(userId, reminderId);
+    }
+
 }
