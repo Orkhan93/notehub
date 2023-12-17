@@ -13,6 +13,8 @@ import java.lang.annotation.*;
 @Size(min = 3, max = 30)
 public @interface Name {
 
+    String message() default "";
+
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};

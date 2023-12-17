@@ -15,6 +15,8 @@ import java.lang.annotation.*;
 @NotBlank(message = "Password must not be blank")
 public @interface Password {
 
+    String message() default "";
+
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
