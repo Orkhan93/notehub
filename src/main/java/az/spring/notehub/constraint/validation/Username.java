@@ -15,6 +15,8 @@ import java.lang.annotation.*;
 @NotBlank(message = "Username must not be blank")
 public @interface Username {
 
+    String message() default "";
+
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
