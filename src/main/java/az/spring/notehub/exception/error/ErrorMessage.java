@@ -9,6 +9,5 @@ public class ErrorMessage {
     public static final String ALREADY_EXISTS = "User already exists : ";
     public static final String OLD_PASSWORD_IS_INCORRECT = "The old password was not entered correctly : ";
     public static final String NOT_MATCHES = "The entered new password and confirm password do not match : ";
-    public final static String VALIDATION_ERROR = " is not valid ";
 
 }

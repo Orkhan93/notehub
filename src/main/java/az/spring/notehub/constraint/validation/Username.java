@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = {})
 @Documented
 @Size(min = 6, max = 30)
-@NotBlank(message = "Username must not be blank")
+@NotBlank(message = " Must not be blank")
 public @interface Username {
 
     String message() default "";
