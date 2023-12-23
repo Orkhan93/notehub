@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = {})
 @Documented
 @Size(min = 6)
-@NotBlank(message = "Password must not be blank")
+@NotBlank(message = " Must not be blank")
 public @interface Password {
 
     String message() default "";
