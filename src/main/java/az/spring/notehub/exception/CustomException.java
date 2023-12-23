@@ -1,6 +1,5 @@
 package az.spring.notehub.exception;
 
-import az.spring.notehub.exception.error.ErrorMessage;
 import az.spring.notehub.exception.error.ErrorResponse;
 import az.spring.notehub.exception.handler.*;
 import lombok.extern.slf4j.Slf4j;
@@ -62,10 +61,11 @@ public class CustomException {
     public ErrorResponse handlerMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         log.error("handlerMethodArgumentNotValidException {}", exception.getMessage());
         String fieldName = exception.getBindingResult().getFieldError().getField();
+        String message = exception.getBindingResult().getFieldError().getDefaultMessage();
 
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setCode(HttpStatus.BAD_REQUEST.name());
-        errorResponse.setMessage(fieldName + ErrorMessage.VALIDATION_ERROR);
+        errorResponse.setMessage(fieldName + " " + message);
         log.error("Validation error : {}", exception.getMessage());
         return errorResponse;
     }

@@ -31,6 +31,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final EncryptionService encryptionService;
+    private final JwtService jwtService;
 
     public UserResponse signup(SignupRequest signupRequest) {
         log.info("Inside signupRequest {}", signupRequest);
@@ -41,15 +43,17 @@ public class UserService {
         } else {
             User user = userMapper.fromSignRequestToModel(signupRequest);
             user.setUserRole(UserRole.USER);
+            user.setPassword(encryptionService.encryptPassword(signupRequest.getPassword()));
             log.info("Inside signup {}", user);
             return userMapper.fromModelToResponse(userRepository.save(user));
         }
     }
 
     public String login(LoginRequest loginRequest) {
-        Optional<User> optionalUser = userRepository.findByEmailEqualsIgnoreCase(loginRequest.getEmail());
-        if (optionalUser.isPresent() && optionalUser.get().getPassword().equals(loginRequest.getPassword())) {
-            return NoteConstant.SUCCESSFULLY_REGISTER;
+        User user = userRepository.findByEmailEqualsIgnoreCase(loginRequest.getEmail())
+                .orElseThrow(() -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
+        if (encryptionService.verifyPassword(loginRequest.getPassword(), user.getPassword())) {
+            return jwtService.generateJwt(user);
         } else
             return NoteConstant.BAD_CREDENTIALS;
     }

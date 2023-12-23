@@ -28,3 +28,11 @@ logging:
     az.spring.notehubservice: DEBUG
     org.springframework.web: ERROR
     org.hibernate: ERROR
+encryption:
+  salt:
+    rounds: 10
+jwt:
+  algorithm:
+    key: SuperSecureSecretKey
+  issuer: notehub
+  expiryInSeconds: 604800
